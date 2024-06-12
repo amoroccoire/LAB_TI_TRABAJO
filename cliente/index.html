@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador Semántico</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+    <script>
+        async function getSuggestions(word) {
+            if (word.length === 0) {
+                document.getElementById("suggestions").innerHTML = "";
+                return;
+            }
+
+            const response = await fetch(`http://localhost:8080/suggest?word=${encodeURIComponent(word)}`);
+            const suggestions = await response.json();
+
+            const suggestionsList = document.getElementById("suggestions");
+            suggestionsList.innerHTML = "";
+            suggestions.forEach(suggestion => {
+                const listItem = document.createElement("li");
+                listItem.textContent = suggestion;
+                suggestionsList.appendChild(listItem);
+            });
+            console.log(suggestions)
+        }
+
+        function onInput() {
+            const input = document.getElementById("wordInput");
+            const words = input.value.split(/\s+/);
+            const lastWord = words[words.length - 1];
+            getSuggestions(lastWord);
+        }
+    </script>
+</head>
+<body>
+    <h1>Analizador Semántico</h1>
+    <input type="text" id="wordInput" oninput="onInput()" placeholder="Escribe una oración...">
+    <ul id="suggestions"></ul>
+</body>
+</html>
